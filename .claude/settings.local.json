@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(npx next *)",
+      "Bash(sed -n '33,47p' src/components/sections/About.tsx)",
+      "Bash(sed -n '10,20p' src/components/sections/Experience.tsx)",
+      "Bash(sed -n '44,52p' src/components/sections/Values.tsx)",
+      "Bash(sed -n '64,70p' src/components/sections/Contact.tsx)",
+      "Bash(git -C /home/ryosu/website remote -v)"
+    ]
+  }
+}

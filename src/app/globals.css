@@ -1,0 +1,364 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────── */
+:root {
+  --bg:      #111116;
+  --bg-2:    #18181f;
+  --bg-3:    #20202a;
+  --text:    #f0ece4;
+  --muted:   #6b6b7a;
+  --accent:  #4f8c62;
+  --accent-2: #8b7ec8;
+  --accent-3: #6db89a;
+  --border:  rgba(255,255,255,0.07);
+}
+
+@theme inline {
+  --color-background:  var(--bg);
+  --color-foreground:  var(--text);
+  --color-accent:      var(--accent);
+  --color-accent-2:    var(--accent-2);
+  --color-accent-3:    var(--accent-3);
+  --color-muted:       var(--muted);
+  --font-sans:         var(--font-geist-sans);
+  --font-mono:         var(--font-geist-mono);
+  --font-display:      var(--font-syne);
+}
+
+/* ─── Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: auto; /* Lenis handles smoothness */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  /* clip ≠ hidden: overflow をクリップするが BFC を作らないので position:sticky を壊さない */
+  overflow-x: clip;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 100px; }
+
+/* ─── Grain Texture ─────────────────────────────────── */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: grain-drift 10s steps(8) infinite;
+}
+@keyframes grain-drift {
+  0%,100% { background-position: 0 0 }
+  12.5%   { background-position: -5% -10% }
+  25%     { background-position: -15% 5% }
+  37.5%   { background-position: 7% -25% }
+  50%     { background-position: -5% 25% }
+  62.5%   { background-position: -15% 10% }
+  75%     { background-position: 15% 0% }
+  87.5%   { background-position: 0% 15% }
+}
+
+/* ─── Typography helpers ─────────────────────────────── */
+.font-display { font-family: var(--font-display), sans-serif; }
+
+/* ─── Organic Blobs ─────────────────────────────────── */
+.blob {
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* ─── Buttons ────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #0c0c0f;
+}
+.btn-primary:hover {
+  background: color-mix(in oklch, var(--accent) 75%, var(--accent-3) 25%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px color-mix(in oklch, var(--accent) 38%, transparent);
+}
+.btn-ghost {
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--text);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(8px);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+  background: color-mix(in oklch, var(--accent) 8%, transparent);
+}
+
+/* ─── Section base ───────────────────────────────────── */
+.section {
+  position: relative;
+  padding: 6rem 0;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+@media (min-width: 768px) {
+  .container { padding: 0 3rem; }
+}
+@media (min-width: 1280px) {
+  .container { padding: 0 4rem; }
+}
+
+/* ─── Section label ──────────────────────────────────── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.6875rem;
+  font-family: var(--font-mono), monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  opacity: 0.85;
+}
+.section-label::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+/* ─── Card base ──────────────────────────────────────── */
+.card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  border-color: rgba(255,255,255,0.13);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+}
+
+/* ─── Selection color ────────────────────────────────── */
+::selection {
+  background: var(--accent);
+  color: #0c0c0f;
+}
+
+/* ─── Focus visible ──────────────────────────────────── */
+:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ─── Link defaults ──────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── CSS @property — typed custom properties for animation ── */
+/* Enables smooth transition on custom properties via transition:   */
+@property --glow-spread {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: false;
+}
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --shimmer-pos {
+  syntax: '<percentage>';
+  initial-value: -60%;
+  inherits: false;
+}
+
+/* ─── Animated gradient name (background-clip: text) ─────── */
+/* Usage: add class="text-gradient-name" to the h1            */
+.text-gradient-name {
+  background: linear-gradient(
+    110deg,
+    var(--text)      0%,
+    var(--accent-3)  26%,
+    var(--text)      48%,
+    var(--accent-2)  72%,
+    var(--text)     100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: name-shimmer 9s ease-in-out infinite;
+}
+@keyframes name-shimmer {
+  0%, 100% { background-position: 0%   50% }
+  50%       { background-position: 100% 50% }
+}
+
+/* ─── Card light-sweep on hover (uses @property) ─────────── */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+.card-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--shimmer-pos);
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.045) 50%,
+    transparent 70%
+  );
+  transform: skewX(-12deg);
+  pointer-events: none;
+  --shimmer-pos: -60%;
+  transition: --shimmer-pos 0.65s ease;
+}
+.card-shine:hover::after {
+  --shimmer-pos: 160%;
+}
+
+/* ─── Featured bento: spinning conic gradient border ─────── */
+/* Requires @property --border-angle above                    */
+.bento-spin-border {
+  background:
+    linear-gradient(145deg, #1e1e2a 0%, #14141c 100%) padding-box,
+    conic-gradient(
+      from var(--border-angle),
+      transparent 30%,
+      color-mix(in oklch, var(--accent) 80%, transparent) 50%,
+      transparent 70%
+    ) border-box;
+  border: 1px solid transparent;
+  animation: spin-border 5s linear infinite paused;
+  transition: box-shadow 0.4s ease;
+}
+.bento-spin-border:hover {
+  animation-play-state: running;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 10px 28px rgba(0, 0, 0, 0.22),
+    0 0 30px color-mix(in oklch, var(--accent) 20%, transparent);
+}
+@keyframes spin-border {
+  to { --border-angle: 360deg; }
+}
+
+/* ─── Custom cursor (fine-pointer devices only) ──────────── */
+@media (pointer: fine) {
+  /* Prevent total loss of cursor on fallback but hide it on interactive elements/main body */
+  body, a, button, input, textarea, [role="button"], .btn {
+    cursor: none;
+  }
+}
+
+/* ─── Marquee ────────────────────────────────────────── */
+.marquee-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 0;
+  overflow: hidden;
+}
+
+/* ─── Image defaults ─────────────────────────────────── */
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ─── Outline text utility ───────────────────────────── */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.12);
+}
+
+/* ─── Horizontal rule ────────────────────────────────── */
+.rule {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Elevated card ──────────────────────────────────── */
+.card-elevated {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 0 0 0 transparent;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-elevated:hover {
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+}
+
+/* ─── Vignette ───────────────────────────────────────── */
+/* ページ端を暗くし「窓から覗いている」奥行き感を強調する */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  background: radial-gradient(ellipse 85% 75% at 50% 40%, transparent 0%, rgba(17,17,22,0.3) 100%);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Grain texture stays visible but doesn't drift */
+  .grain { animation: none; }
+  /* Blob pulse/float stops */
+  .blob  { animation: none; }
+  /* Marquee stops */
+  .marquee-inner { animation: none !important; }
+  /* Button lift effect off */
+  .btn-primary:hover,
+  .btn-ghost:hover { transform: none; }
+}
